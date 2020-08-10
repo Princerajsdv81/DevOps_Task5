@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  grafana
+  labels: 
+    name: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env: grafana-pod
+  template:
+    metadata:
+      name: grafana-deploy
+      labels:
+        env: grafana-pod
+    spec:
+      containers:
+        - name: grafana-con
+          image: prince12/grafana
+          volumeMounts: 
+            - name: grafana-pvc
+              mountPath: /var/lib/grafana
+      volumes:
+        - name: grafana-pvc
+          persistentVolumeClaim:
+              claimName: grafana-pvc
