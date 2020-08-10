@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  prometheus
+  labels: 
+    name: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env: prom-pod
+  template:
+    metadata:
+      name: prometheus-deploy
+      labels:
+        env: prom-pod
+    spec:
+      containers:
+        - name: prom-con
+          image: prince12/prometheus
+          volumeMounts: 
+            - name: prometheus-pvc
+              mountPath: /etc/prometheus/data
+            - name:  prometheus-config
+              mountPath: /etc/prometheus/prometheus.yml
+              subPath: prometheus.yml 
+          ports:
+          - containerPort: 9090 
+      volumes:
+        - name: prometheus-pvc
+          persistentVolumeClaim:
+              claimName: prometheus-pvc
+        - name: prometheus-config
+          configMap:
+             name: prometheus-config
+             defaultMode: 0744
